@@ -1,0 +1,372 @@
+function [vNaughts, vMax, kM] = M3_Algorithm_009_24
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ % ENGR 132 
+ % Program Description
+ % This program will read a large data set of test data for different
+ % concentrations and calculate the initial velocity for each concentration.
+ %
+ % Function Call
+ % M2_Algorithm_009_24
+ %
+ % Input Arguments
+ % None
+ %
+ % Output Arguments
+ % vNaughts - 10 value array containing the vNaught values for all
+ % concentrations (uM/s)
+ % vMax - single value that summarizes the enzyme (uM/s)
+ % kM - single value that summarizes the enzyme (uM)
+ %
+ % Assignment Information
+ %   Assignment:     M2, Problem 1
+ %   Team members:   Sofia Loucks, louckss@purdue.edu
+ %                   Allison Womer, awomer@purdue.edu
+ %                   Einar Pederson, ecpeders@purdue.edu
+ %                   Katherine Sarafin, ksarafin@purdue.edu
+ %   Team ID:        009-24
+ %   Academic Integrity:
+ %     [] We worked with one or more peers but our collaboration
+ %        maintained academic integrity.
+ %     Peers we worked with: 
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ %% ____________________
+ %% INITIALIZATION
+ 
+ vNaughts = zeros(1,10); % Create empty matrix for all 10 vnaught values.
+ start = 2; % First column with test data.
+ slopes = zeros(1,50); % Create empty matrix for 50 slopes to average.
+
+ % Import data from file.
+ all_data = readmatrix('Data_PGOX50_enzyme.csv');
+ 
+ time = all_data(9:end,1);
+ concentration = [3.75, 7.5, 15, 30, 65, 125, 250, 500, 1000, 2000];
+ vMax = 0;
+ kM = 0;
+ 
+ %% ____________________
+ %% CALCULATIONS
+
+    % Loop through each test concentration.
+    for j = 1:1:10
+    
+        % Separate desired test concentration from full matrix.
+        original_data = all_data((9:end), start);
+    
+        % Smooth the data before processing.
+        original_smooth = smooth(original_data(:));
+    
+        % Find the slopes of the first 50 sets of points for each test and average them
+        for s = 1:1:50
+        
+            slope_original = (original_smooth(s+1) - original_smooth(s))/(time(s+1) - time(s));
+    
+            slopes(s) = (slope_original);
+        
+        end
+    
+        % Assign to values vector.
+        vNaughts(j) = (mean(slopes));
+    
+        start = start + 1;
+        
+    end
+    
+ % Adjust values for eadie hofstee plot.
+ xAxis = vNaughts./concentration;
+ yAxis = vNaughts;
+  
+ % Create model 
+ coeffs = polyfit(xAxis, yAxis, 1);
+ m = coeffs(1);
+ b = coeffs(2);
+ vMax = b;
+ kM = -m;
+
+ %% ____________________
+ %% FORMATTED TEXT/FIGURE DISPLAYS
+
+%%PRINT DISPLAYS
+% Display results to the command window.
+fprintf("Vnaught Values [uM/s]: ");
+fprintf("%.4f  ", vNaughts(:));
+fprintf("\n");
+fprintf("Vmax [uM/s]: %.2f\n", vMax);
+fprintf("Km [uM]: %.2f\n\n", kM);
+%fprintf("concentration 1: %0.2f\n", size(product));
+%fprintf("time: %.2f\n", size(time));
+
+%%PLOT DISPLAYS
+%Plot - of Original Data versus V0 calculation model 
+%CONCENTRATION 1 & 2
+figure(1)
+product = all_data(:, 2);
+time_fixed = linspace(time(1), time(end), length(product));
+
+% Calculations for Original vs. Vnaught Plots - Concentration 1
+coeffs_plot = polyfit(product, time_fixed, 1);
+m_plot1 = coeffs_plot(1);
+b_plot1 = coeffs_plot(2);
+ymodel = vNaughts(1) .* time;
+
+plot(time_fixed, product, "r*");
+title("Enzyme Concentration 1 VS. Enzyme Concentration 2");
+xlabel("Time (s)");
+ylabel("Product [P]");
+xlim([6, 400]);
+ylim([0, 10]);
+
+grid on;
+hold on;
+
+plot(time, ymodel, 'r-');
+hold on;
+
+product = all_data(:, 3);
+time_fixed = linspace(time(1), time(end), length(product));
+
+% Calculations for Original vs. Vnaught Plots - Concentration 2
+coeffs_plot = polyfit(product, time_fixed, 1);
+m_plot2 = coeffs_plot(1);
+b_plot2 = coeffs_plot(2);
+ymodel = vNaughts(2) .* time;
+
+plot(time_fixed, product, "b*");
+xlabel("Time (s)");
+ylabel("Product [P]");
+hold on;
+
+plot(time, ymodel, 'b-');
+hold on;
+legend('Concentration 1 Original Data', 'Concentration 1 V0 model', 'Concentration 2 Original Data', 'Concentration 2 V0 model', "location", "best");
+
+%CONCENTRATION 3 & 4
+figure(2) 
+
+%Concentration 3
+product = all_data(:, 4);
+time_fixed = linspace(time(1), time(end), length(product));
+
+% Calculations for Original vs. Vnaught Plots - Concentration 3
+coeffs_plot = polyfit(product, time_fixed, 1);
+m_plot3 = coeffs_plot(1);
+b_plot3 = coeffs_plot(2);
+ymodel = vNaughts(3) .* time;
+
+plot(time_fixed, product, "c*");
+xlabel("Time (s)");
+ylabel("Product [P]");
+title("Enzyme Concentration 3 VS. Enzyme Concentration 4");
+xlim([0, 200]);
+ylim([0, 30]);
+
+grid on;
+hold on;
+
+plot(time, ymodel, 'c-');
+hold on;
+
+%Concentration 4
+product = all_data(:, 5);
+time_fixed = linspace(time(1), time(end), length(product));
+
+% Calculations for Original vs. Vnaught Plots - Concentration 2
+coeffs_plot = polyfit(product, time_fixed, 1);
+m_plot4 = coeffs_plot(1);
+b_plot4 = coeffs_plot(2);
+ymodel = vNaughts(4) .* time;
+
+plot(time_fixed, product, "m*");
+xlabel("Time (s)");
+ylabel("Product [P]");
+hold on;
+
+plot(time, ymodel, 'm-');
+hold on;
+legend('Concentration 3 Original Data', 'Concentration 3 V0 model', 'Concentration 4 Original Data', 'Concentration 4 V0 model', "location", "best");
+
+%CONCENTRATION 5 & 6
+figure(3) 
+
+%Concentration 5
+product = all_data(:, 6);
+time_fixed = linspace(time(1), time(end), length(product));
+
+% Calculations for Original vs. Vnaught Plots - Concentration 3
+coeffs_plot = polyfit(product, time_fixed, 1);
+m_plot5 = coeffs_plot(1);
+b_plot5 = coeffs_plot(2);
+ymodel = vNaughts(5) .* time;
+
+plot(time_fixed, product, "c*");
+xlabel("Time (s)");
+ylabel("Product [P]");
+title("Enzyme Concentration 5 VS. Enzyme Concentration 6");
+xlim([0, 400]);
+ylim([0, 100]);
+
+grid on;
+hold on;
+
+plot(time, ymodel, 'c-');
+hold on;
+
+%Concentration 6
+product = all_data(:, 7);
+time_fixed = linspace(time(1), time(end), length(product));
+
+% Calculations for Original vs. Vnaught Plots - Concentration 2
+coeffs_plot = polyfit(product, time_fixed, 1);
+m_plot6 = coeffs_plot(1);
+b_plot6 = coeffs_plot(2);
+ymodel = vNaughts(6) .* time;
+
+plot(time_fixed, product, "b*");
+xlabel("Time (s)");
+ylabel("Product [P]");
+hold on;
+
+plot(time, ymodel, 'b-');
+hold on;
+legend('Concentration 5 Original Data', 'Concentration 5 V0 model', 'Concentration 6 Original Data', 'Concentration 6 V0 model', "location", "best");
+
+%CONCENTRATION 7 & 8
+figure(4) 
+
+%Concentration 7
+product = all_data(:, 8);
+time_fixed = linspace(time(1), time(end), length(product));
+
+% Calculations for Original vs. Vnaught Plots - Concentration 3
+coeffs_plot = polyfit(product, time_fixed, 1);
+m_plot7 = coeffs_plot(1);
+b_plot7 = coeffs_plot(2);
+ymodel = vNaughts(7) .* time;
+
+plot(time_fixed, product, "r*");
+xlabel("Time (s)");
+ylabel("Product [P]");
+title("Enzyme Concentration 7 VS. Enzyme Concentration 8");
+xlim([0, 600]);
+ylim([0, 300]);
+
+grid on;
+hold on;
+
+plot(time, ymodel, 'r-');
+hold on;
+
+%Concentration 8
+product = all_data(:, 9);
+time_fixed = linspace(time(1), time(end), length(product));
+
+% Calculations for Original vs. Vnaught Plots - Concentration 2
+coeffs_plot = polyfit(product, time_fixed, 1);
+m_plot8 = coeffs_plot(1);
+b_plot8 = coeffs_plot(2);
+ymodel = vNaughts(8) .* time;
+
+plot(time_fixed, product, "g*");
+xlabel("Time (s)");
+ylabel("Product [P]");
+hold on;
+
+plot(time, ymodel, 'g-');
+hold on;
+legend('Concentration 7 Original Data', 'Concentration 7 V0 model', 'Concentration 8 Original Data', 'Concentration 8 V0 model', "location", "best");
+
+%CONCENTRATION 9 & 10
+figure(5) 
+
+%Concentration 9
+product = all_data(:, 10);
+time_fixed = linspace(time(1), time(end), length(product));
+
+% Calculations for Original vs. Vnaught Plots - Concentration 3
+coeffs_plot = polyfit(product, time_fixed, 1);
+m_plot9 = coeffs_plot(1);
+b_plot9 = coeffs_plot(2);
+ymodel = vNaughts(9) .* time;
+
+plot(time_fixed, product, "k*");
+xlabel("Time (s)");
+ylabel("Product [P]");
+title("Enzyme Concentration 9 VS. Enzyme Concentration 10");
+xlim([0, 1000]);
+ylim([0, 1000]);
+
+grid on;
+hold on;
+
+plot(time, ymodel, 'k-');
+hold on;
+
+%Concentration 10
+product = all_data(:, 11);
+time_fixed = linspace(time(1), time(end), length(product));
+
+% Calculations for Original vs. Vnaught Plots - Concentration 2
+coeffs_plot = polyfit(product, time_fixed, 1);
+m_plot10 = coeffs_plot(1);
+b_plot10 = coeffs_plot(2);
+ymodel = vNaughts(10) .* time;
+
+plot(time_fixed, product, "c*");
+xlabel("Time (s)");
+ylabel("Product [P]");
+hold on;
+
+plot(time, ymodel, 'c-');
+hold on;
+legend('Concentration 9 Original Data', 'Concentration 9 V0 model', 'Concentration 10 Original Data', 'Concentration 10 V0 model', "location", "best");
+
+
+% Plot 6 - of Concentration versus V0 
+figure(6)
+plot(concentration, vNaughts, "bd");
+title("Enzyme Concentration versus the Calculated Reaction Velocity");
+xlabel("Substrate Concentration (mM)");
+ylabel("Reaction Velocity (V0) (mM/s)");
+grid on;
+hold on;
+
+%Michaelis-Menten modeled lines between each point
+% x_vals = [3.75:7.5];
+% ymodel1 = m_plot1*concentration + b_plot1;
+% plot(concentration, ymodel1, "b-");
+% ymodel2 = m_plot2*concentration + b_plot2;
+% plot(concentration, ymodel2, "b-");
+% ymodel3 = m_plot3*concentration + b_plot3;
+% plot(concentration, ymodel3, "b-");
+% ymodel4 = m_plot4*concentration + b_plot4;
+% plot(concentration, ymodel4, "b-");
+% plot([3.75 7.5], [0.022944 0.047088], 'k-')
+% plot([7.5 15], [0.047088 0.095492], 'k-')
+% plot([15 30], [0.095492 0.17544], 'k-')
+% plot([30 65], [0.17544 0.305544], 'k-')
+% plot([65 125], [0.305544 0.580548], 'k-')
+% plot([125 250], [0.580548 0.824828], 'k-')
+% plot([250 500], [0.824828 1.24962], 'k-')
+% plot([500 1000], [1.24962 1.37097], 'k-')
+% plot([1000 2000], [1.37097 1.50877], 'k-')
+MM_model = (vMax .* concentration) / (kM + concentration);
+plot(concentration, MM_model, 'k-')
+legend("Original Data", "V Naught Calculation Model", "location", "best");
+hold off;
+
+end
+
+ %% ____________________
+ %% RESULTS
+
+% Vnaught Values [uM/s]: 0.0229  0.0471  0.0955  0.1754  0.3055  0.5805  0.8248  1.2496  1.3710  1.5088  
+% Vmax [uM/s]: 1.77
+% Km [uM]: 274.44
+
+ %% ____________________
+ %% ACADEMIC INTEGRITY STATEMENT
+ % We have not used source code obtained from any other unauthorized
+ % source, either modified or unmodified. Neither have we provided
+ % access to my code to another. The program we are submitting
+ % is our own original work.
