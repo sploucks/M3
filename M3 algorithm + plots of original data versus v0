@@ -42,6 +42,7 @@ function [vNaughts, vMax, kM] = M3_Algorithm_009_24
  
  time = all_data(9:end,1);
  concentration = [3.75, 7.5, 15, 30, 65, 125, 250, 500, 1000, 2000];
+ vnaught_reference = [0.025, 0.049, 0.099, 0.176, 0.329, 0.563, 0.874, 1.192, 1.361, 1.603]
  vMax = 0;
  kM = 0;
  
@@ -73,16 +74,16 @@ function [vNaughts, vMax, kM] = M3_Algorithm_009_24
         
     end
     
- % Adjust values for eadie hofstee plot.
- xAxis = vNaughts./concentration;
- yAxis = vNaughts;
+ % Adjust values for lineweaver burk plot.
+ xAxis = 1./concentration;
+ yAxis = 1./vNaughts;
   
  % Create model 
  coeffs = polyfit(xAxis, yAxis, 1);
  m = coeffs(1);
  b = coeffs(2);
- vMax = b;
- kM = -m;
+ vMax = 1/b;
+ kM = m*vMax;
 
  %% ____________________
  %% FORMATTED TEXT/FIGURE DISPLAYS
@@ -109,6 +110,7 @@ coeffs_plot = polyfit(product, time_fixed, 1);
 m_plot = coeffs_plot(1);
 b_plot = coeffs_plot(2);
 ymodel = vNaughts(1) .* time;
+ymodel_ref = vnaught_reference(1) * time;
 
 plot(time_fixed, product, "r*");
 title("Enzyme Concentration 1 VS. Enzyme Concentration 2");
@@ -120,7 +122,10 @@ ylim([0, 10]);
 grid on;
 hold on;
 
-plot(time, ymodel, 'r-');
+plot(time, ymodel, 'r-'); %calculated vnaught value
+hold on;
+
+plot(time, ymodel_ref, 'y-'); %vnaught from reference data
 hold on;
 
 product = all_data(:, 3);
@@ -131,6 +136,7 @@ coeffs_plot = polyfit(product, time_fixed, 1);
 m_plot = coeffs_plot(1);
 b_plot = coeffs_plot(2);
 ymodel = vNaughts(2) .* time;
+ymodel_ref = vnaught_reference(2) * time;
 
 plot(time_fixed, product, "b*");
 xlabel("Time (s)");
@@ -139,7 +145,11 @@ hold on;
 
 plot(time, ymodel, 'b-');
 hold on;
-legend('Concentration 1 Original Data', 'Concentration 1 V0 model', 'Concentration 2 Original Data', 'Concentration 2 V0 model', "location", "best");
+
+plot(time, ymodel_ref, 'g-'); %vnaught from reference data
+hold off;
+
+legend('Concentration 1 Original Data', 'Concentration 1 Calculated V0 model', 'Concentration 1 Reference V0', 'Concentration 2 Original Data', 'Concentration 2 Calculated V0 model', 'Concentration 2 Reference V0', "location", "best");
 
 %CONCENTRATION 3 & 4
 figure(2) 
@@ -153,6 +163,7 @@ coeffs_plot = polyfit(product, time_fixed, 1);
 m_plot = coeffs_plot(1);
 b_plot = coeffs_plot(2);
 ymodel = vNaughts(3) .* time;
+ymodel_ref = vnaught_reference(3) * time;
 
 plot(time_fixed, product, "y*");
 xlabel("Time (s)");
@@ -167,6 +178,9 @@ hold on;
 plot(time, ymodel, 'y-');
 hold on;
 
+plot(time, ymodel_ref, 'r-'); %vnaught from reference data
+hold on;
+
 %Concentration 4
 product = all_data(:, 5);
 time_fixed = linspace(time(1), time(end), length(product));
@@ -176,6 +190,7 @@ coeffs_plot = polyfit(product, time_fixed, 1);
 m_plot = coeffs_plot(1);
 b_plot = coeffs_plot(2);
 ymodel = vNaughts(4) .* time;
+ymodel_ref = vnaught_reference(4) * time;
 
 plot(time_fixed, product, "m*");
 xlabel("Time (s)");
@@ -184,7 +199,11 @@ hold on;
 
 plot(time, ymodel, 'm-');
 hold on;
-legend('Concentration 3 Original Data', 'Concentration 3 V0 model', 'Concentration 4 Original Data', 'Concentration 4 V0 model', "location", "best");
+
+plot(time, ymodel_ref, 'k-'); %vnaught from reference data
+hold off;
+
+legend('Concentration 3 Original Data', 'Concentration 3 Calculated V0 model', 'Concentration 3 Reference V0', 'Concentration 4 Original Data', 'Concentration 4 Calculated V0 model', 'Concentration 4 Reference V0', "location", "best");
 
 %CONCENTRATION 5 & 6
 figure(3) 
@@ -198,6 +217,7 @@ coeffs_plot = polyfit(product, time_fixed, 1);
 m_plot = coeffs_plot(1);
 b_plot = coeffs_plot(2);
 ymodel = vNaughts(5) .* time;
+ymodel_ref = vnaught_reference(5) * time;
 
 plot(time_fixed, product, "c*");
 xlabel("Time (s)");
@@ -212,6 +232,9 @@ hold on;
 plot(time, ymodel, 'c-');
 hold on;
 
+plot(time, ymodel_ref, 'k-'); %vnaught from reference data
+hold on;
+
 %Concentration 6
 product = all_data(:, 7);
 time_fixed = linspace(time(1), time(end), length(product));
@@ -221,6 +244,7 @@ coeffs_plot = polyfit(product, time_fixed, 1);
 m_plot = coeffs_plot(1);
 b_plot = coeffs_plot(2);
 ymodel = vNaughts(6) .* time;
+ymodel_ref = vnaught_reference(6) * time;
 
 plot(time_fixed, product, "b*");
 xlabel("Time (s)");
@@ -229,7 +253,10 @@ hold on;
 
 plot(time, ymodel, 'b-');
 hold on;
-legend('Concentration 5 Original Data', 'Concentration 5 V0 model', 'Concentration 6 Original Data', 'Concentration 6 V0 model', "location", "best");
+
+plot(time, ymodel_ref, 'g-'); %vnaught from reference data
+hold off;
+legend('Concentration 5 Original Data', 'Concentration 5 Calculated V0 model', 'Concentration 5 Reference V0', 'Concentration 6 Original Data', 'Concentration 6 Calculated V0 model', 'Concentration 6 Reference V0', "location", "best");
 
 %CONCENTRATION 7 & 8
 figure(4) 
@@ -243,6 +270,7 @@ coeffs_plot = polyfit(product, time_fixed, 1);
 m_plot = coeffs_plot(1);
 b_plot = coeffs_plot(2);
 ymodel = vNaughts(7) .* time;
+ymodel_ref = vnaught_reference(7) * time;
 
 plot(time_fixed, product, "r*");
 xlabel("Time (s)");
@@ -257,6 +285,9 @@ hold on;
 plot(time, ymodel, 'r-');
 hold on;
 
+plot(time, ymodel_ref, 'c-'); %vnaught from reference data
+hold on;
+
 %Concentration 8
 product = all_data(:, 9);
 time_fixed = linspace(time(1), time(end), length(product));
@@ -266,6 +297,7 @@ coeffs_plot = polyfit(product, time_fixed, 1);
 m_plot = coeffs_plot(1);
 b_plot = coeffs_plot(2);
 ymodel = vNaughts(8) .* time;
+ymodel_ref = vnaught_reference(8) * time;
 
 plot(time_fixed, product, "g*");
 xlabel("Time (s)");
@@ -274,7 +306,10 @@ hold on;
 
 plot(time, ymodel, 'g-');
 hold on;
-legend('Concentration 7 Original Data', 'Concentration 7 V0 model', 'Concentration 8 Original Data', 'Concentration 8 V0 model', "location", "best");
+
+plot(time, ymodel_ref, 'k-'); %vnaught from reference data
+hold off;
+legend('Concentration 7 Original Data', 'Concentration 7 Calculated V0 model', 'Concentration 7 Reference V0', 'Concentration 8 Original Data', 'Concentration 8 Calculated V0 model', 'Concentration 8 Reference V0', "location", "best");
 
 %CONCENTRATION 9 & 10
 figure(5) 
@@ -288,6 +323,7 @@ coeffs_plot = polyfit(product, time_fixed, 1);
 m_plot = coeffs_plot(1);
 b_plot = coeffs_plot(2);
 ymodel = vNaughts(9) .* time;
+ymodel_ref = vnaught_reference(9) * time;
 
 plot(time_fixed, product, "k*");
 xlabel("Time (s)");
@@ -302,6 +338,9 @@ hold on;
 plot(time, ymodel, 'k-');
 hold on;
 
+plot(time, ymodel_ref, 'r-'); %vnaught from reference data
+hold on;
+
 %Concentration 10
 product = all_data(:, 11);
 time_fixed = linspace(time(1), time(end), length(product));
@@ -311,6 +350,7 @@ coeffs_plot = polyfit(product, time_fixed, 1);
 m_plot = coeffs_plot(1);
 b_plot = coeffs_plot(2);
 ymodel = vNaughts(10) .* time;
+ymodel_ref = vnaught_reference(10) * time;
 
 plot(time_fixed, product, "c*");
 xlabel("Time (s)");
@@ -319,8 +359,10 @@ hold on;
 
 plot(time, ymodel, 'c-');
 hold on;
-legend('Concentration 9 Original Data', 'Concentration 9 V0 model', 'Concentration 10 Original Data', 'Concentration 10 V0 model', "location", "best");
 
+plot(time, ymodel_ref, 'g-'); %vnaught from reference data
+hold off;
+legend('Concentration 9 Original Data', 'Concentration 9 Calculated V0 model', 'Concentration 9 Reference V0', 'Concentration 10 Original Data', 'Concentration 10 Calculated V0 model', 'Concentration 10 Reference V0', "location", "best");
 
 
 % Plot - of Concentration versus V0 
@@ -328,21 +370,24 @@ figure(6)
 plot(concentration, vNaughts, "bd");
 title("Enzyme Concentration versus the Calculated Reaction Velocity");
 xlabel("Substrate Concentration (mM)");
-ylabel("Reaction Velocity (V0) (mM/s)");
+ylabel("Calculated Reaction Velocity (V0) (mM/s)");
 grid on;
-%hold on;
 
-%plot(concentration, ymodel, "b-");
-%legend("Original Data", "V Naught Calculation Model", "location", "best");
-%hold off;
+%Plot - of Concentration versus reference V0
+figure(7)
+plot(concentration, vnaught_reference, "bd");
+title("Enzyme Concentration versus the Reference Reaction Velocity");
+xlabel("Substrate Concentration (mM)");
+ylabel("Reference Reaction Velocity (V0) (mM/s)");
+grid on;
 end
 
  %% ____________________
  %% RESULTS
 
 % Vnaught Values [uM/s]: 0.0229  0.0471  0.0955  0.1754  0.3055  0.5805  0.8248  1.2496  1.3710  1.5088  
-% Vmax [uM/s]: 1.77
-% Km [uM]: 274.44
+% Vmax [uM/s]: 2.31
+% Km [uM]: 369.76
 
  %% ____________________
  %% ACADEMIC INTEGRITY STATEMENT
