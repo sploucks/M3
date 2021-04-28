@@ -73,16 +73,16 @@ function [vNaughts, vMax, kM] = M3_Algorithm_009_24
         
     end
     
- % Adjust values for lineweaver burk plot.
- xAxis = 1./concentration;
- yAxis = 1./vNaughts;
+ % Adjust values for eadie hofstee plot.
+ xAxis = vNaughts./concentration;
+ yAxis = vNaughts;
   
  % Create model.
  coeffs = polyfit(xAxis, yAxis, 1);
  m = coeffs(1);
  b = coeffs(2);
- vMax = 1/b;
- kM = m*vMax;
+ vMax = b;
+ kM = -m;
 
  %% ____________________
  %% FORMATTED TEXT/FIGURE DISPLAYS
@@ -100,8 +100,8 @@ end
  %% RESULTS
 
 % Vnaught Values [uM/s]: 0.0229  0.0471  0.0955  0.1754  0.3055  0.5805  0.8248  1.2496  1.3710  1.5088  
-% Vmax [uM/s]: 2.31
-% Km [uM]: 369.76
+% Vmax [uM/s]: 1.77
+% Km [uM]: 274.44
 
  %% ____________________
  %% ACADEMIC INTEGRITY STATEMENT
