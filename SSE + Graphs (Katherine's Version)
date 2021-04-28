@@ -1,0 +1,163 @@
+function [ref_SSE] = M3_MM_PGOX50_009_24
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ENGR 132 
+% Program Description 
+% This function will use the reference values to create a Michaelis-Menten
+% model and analyze them.
+%
+% Function Call
+% [ref_SSE] = M3_MM_PGOX50_009_24(vNaughts, vMax, kM, data);
+%
+% Input Arguments
+% None
+%
+% Output Arguments
+% 1. ref_SSE - SSE value for the reference velocities given.
+%
+% Assignment Information
+%   Assignment:     M3, Problem 2
+%   Team member:    Sofia Loucks, louckss@purdue.edu
+%                   Allison Womer, awomer@purdue.edu
+%                   Einar Pederson, ecpeders@purdue.edu
+%                   Katherine Sarafin, ksarafin@purdue.edu
+%   Team ID:        009-24
+%   Academic Integrity:
+%     [] We worked with one or more peers but our collaboration
+%        maintained academic integrity.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% ____________________
+%% INITIALIZATION
+
+% Import data and parcel it into separate variables for plotting 
+data = readmatrix('Data_PGOX50_enzyme.csv');
+concentration = data(2, 2:11);
+concentration_model = 0:.1:2000;
+time = data(4:end, 1);
+time_line = 0:.1:200;
+
+% All data for the 10 concentrations to be graphed
+v0_1_data = data(4:end, 2);
+v0_2_data = data(4:end, 3);
+v0_3_data = data(4:end, 4);
+v0_4_data = data(4:end, 5);
+v0_5_data = data(4:end, 6);
+v0_6_data = data(4:end, 7);
+v0_7_data = data(4:end, 8);
+v0_8_data = data(4:end, 9);
+v0_9_data = data(4:end, 10);
+v0_10_data = data(4:end, 11);
+
+% Assign given values to variables
+vNaughts_ref = [0.025, 0.049, 0.099, 0.176, 0.329, 0.563, 0.874, 1.192, 1.361, 1.603];
+vMax_ref = 1.806;
+kM_ref = 269.74;
+
+% Create initial velocity lines based on reference values
+refVelocity_1 = vNaughts_ref(1)*time_line;
+refVelocity_2 = vNaughts_ref(2)*time_line;
+refVelocity_3 = vNaughts_ref(3)*time_line;
+refVelocity_4 = vNaughts_ref(4)*time_line;
+refVelocity_5 = vNaughts_ref(5)*time_line;
+refVelocity_6 = vNaughts_ref(6)*time_line;
+refVelocity_7 = vNaughts_ref(7)*time_line;
+refVelocity_8 = vNaughts_ref(8)*time_line;
+refVelocity_9 = vNaughts_ref(9)*time_line;
+refVelocity_10 = vNaughts_ref(10)*time_line;
+
+%% ____________________
+%% CALCULATIONS
+
+% Create a Michaelis-Menten model and determine the initial velocity at the given concentrations based on it 
+model = (vMax_ref.*concentration_model)./(kM_ref + concentration_model);
+vNaughts_model = (vMax_ref.*concentration)./(kM_ref + concentration);
+
+% Calculate SSE for reference values
+SSE_ref_vec = (vNaughts_ref - vNaughts_model).^2;
+ref_SSE = sum(SSE_ref_vec);
+
+%% ____________________
+%% FORMATTED TEXT/FIGURE DISPLAYS
+
+% Plot concentrations 1 and 2
+figure(1);
+plot(time, v0_1_data, 'b-');
+title('Product Concentration over Time at a given Substrate Concentration');
+ylabel('Product Concentration [uM]');
+xlabel('Time [s]');
+    
+hold on
+plot(time, v0_2_data, 'r-');
+plot(time_line, refVelocity_1, 'b-'); 
+plot(time_line, refVelocity_2, 'r-');
+legend('Concentration 1 [3.75 uM]', 'Concentration 2 [7.5 uM]');
+
+% Plot concentrations 3 and 4
+figure(2);
+plot(time, v0_3_data, 'b-');
+title('Product Concentration over Time at a given Substrate Concentration');
+ylabel('Product Concentration [uM]');
+xlabel('Time [s]');
+    
+hold on
+plot(time, v0_4_data, 'r-');
+plot(time_line, refVelocity_3, 'b-'); 
+plot(time_line, refVelocity_4, 'r-');
+legend('Concentration 3 [15 uM]', 'Concentration 4 [30 uM]');
+
+% Plot concentrations 5 and 6
+figure(3);
+plot(time, v0_5_data, 'b-');
+title('Product Concentration over Time at a given Substrate Concentration');
+ylabel('Product Concentration [uM]');
+xlabel('Time [s]');
+    
+hold on
+plot(time, v0_6_data, 'r-');
+plot(time_line, refVelocity_5, 'b-'); 
+plot(time_line, refVelocity_6, 'r-');
+legend('Concentration 5 [65] uM]', 'Concentration 6 [125 uM]');
+
+% Plot concentrations 7 and 8
+figure(4);
+plot(time, v0_7_data, 'b-');
+title('Product Concentration over Time at a given Substrate Concentration');
+ylabel('Product Concentration [uM]');
+xlabel('Time [s]');
+    
+hold on
+plot(time, v0_8_data, 'r-');
+plot(time_line, refVelocity_7, 'b-'); 
+plot(time_line, refVelocity_8, 'r-');
+legend('Concentration 7 [250 uM]', 'Concentration 8 [500 uM]');
+
+% Plot concentrations 9 and 10
+figure(5);
+plot(time, v0_9_data, 'b-');
+title('Product Concentration over Time at a given Substrate Concentration');
+ylabel('Product Concentration [uM]');
+xlabel('Time [s]');
+    
+hold on
+plot(time, v0_10_data, 'r-');
+plot(time_line, refVelocity_9, 'b-'); 
+plot(time_line, refVelocity_10, 'r-');
+legend('Concentration 9 [1000 uM]', 'Concentration 10 [2000 uM]');
+
+% Plot Michaelis-Menten Model
+figure(6);
+plot(concentration_model, model, 'b-');
+title('Michaelis-Menten Kinetics for Enzyme');
+ylabel('Velocity [uM/s]');
+xlabel('Substrate Concentration [uM]');
+
+hold on
+plot(concentration, vNaughts_ref, 'kd');
+legend('Michaelis-Menten Model', 'Reference Data', 'location', 'best');
+
+%% ____________________
+%% ACADEMIC INTEGRITY STATEMENT
+% We have not used source code obtained from any other unauthorized
+% source, either modified or unmodified. Neither have we provided
+% access to my code to another. The program we are submitting
+% is our own original work.
