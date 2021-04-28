@@ -1,0 +1,74 @@
+function M3_main_009_24
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ENGR 132 
+% Program Description 
+% This function will call previously developed user defined functions to
+% identify parameters from given data and analyze the effectiveness of the
+% identification.
+%
+% Function Call
+% M3_main_009_24;
+%
+% Input Arguments
+% None
+%
+% Output Arguments
+% None
+%
+% Assignment Information
+%   Assignment:     M3, Problem 3
+%   Team member:    Sofia Loucks, louckss@purdue.edu
+%                   Allison Womer, awomer@purdue.edu
+%                   Einar Pederson, ecpeders@purdue.edu
+%                   Katherine Sarafin, ksarafin@purdue.edu
+%   Team ID:        009-24
+%   Academic Integrity:
+%     [] We worked with one or more peers but our collaboration
+%        maintained academic integrity.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% ____________________
+%% INITIALIZATION
+
+% Import data from file
+data = readmatrix('Data_PGOX50_enzyme.csv');
+
+% Initialize concentration data for modelling and SSE Analysis
+concentration = data(2, 2:11);
+concentration_model = 0:.1:2000;
+
+% Assign reference values to variables
+vMax_ref = 1.806;
+kM_ref = 269.74;
+
+%% ____________________
+%% CALCULATIONS
+
+% Call UDF for parameter analysis
+[vNaughts, vMax, kM] = M3_Algorithm_009_24(data);
+
+% Call UDF to display plots
+SSE = M3_MM_PGOX50_009_24(vNaughts, vMax, kM);
+
+%% ____________________
+%% FORMATTED TEXT/FIGURE DISPLAYS
+
+% Plot Michaelis-Menten model for calculated values
+
+fprintf("Calculated SSE: %.4f\n", SSE);
+
+%% ____________________
+%% RESULTS
+
+% Vnaught Values [uM/s]: 0.0229  0.0471  0.0955  0.1754  0.3055  0.5805  0.8248  1.2496  1.3710  1.5088  
+% Vmax [uM/s]: 1.77
+% Km [uM]: 274.44
+%
+% Calculated SSE: 0.0163
+
+%% ____________________
+%% ACADEMIC INTEGRITY STATEMENT
+% We have not used source code obtained from any other unauthorized
+% source, either modified or unmodified. Neither have we provided
+% access to my code to another. The program we are submitting
+% is our own original work.
